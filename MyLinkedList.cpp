@@ -2,55 +2,46 @@
 #include <stdexcept>
 using namespace std;
 
-MyLinkedList::MyLinkedList(){
+MyLinkedList::MyLinkedList(){ //O(1)
     this->size=0;
     this->head=this->tail=nullptr;
 }
 
-MyLinkedList::~MyLinkedList(){
+MyLinkedList::~MyLinkedList(){ //O(n)
     while(this->size>0){
         this->removeFirst();
     }
 }
 
-int MyLinkedList::length(){
+int MyLinkedList::length(){ //O(1)
    return this->size;
 }
 
-bool MyLinkedList::isEmpty(){
+bool MyLinkedList::isEmpty(){ //O(1)
     return this->size==0;
 }
 
-int MyLinkedList::getAt(string key){ //Regrsar el valor asociado a la llave
-    MyNodoLL* current=this->head;
+int MyLinkedList::getAt(string key){ //O(n)
+    MyNodoLL* current=this->head;    //Regresar el valor asociado a la llave
     while(current!=nullptr){
         if(current->key==key){
             return current->data;
         }
+        current=current->next;
     }
     throw invalid_argument("No se encontro la llave "+key+" en la tabla");
 }
 
-/*void MyLinkedList::setAt(int pos,int data){
-    if(this->size>0){
-    MyNodoLL*tmp=this->head;
-    for(int i=0;i<pos;i++){
-        tmp=tmp->next;
-    }
-    tmp->data=data;
-    }else{
-        throw invalid_argument("No se puede modificar un elemento de una lista vacia");
-    }
-}*/
-
-void MyLinkedList::insertFirst(string key,int data){
+void MyLinkedList::insertFirst(string key,int data){ //O(1)
     MyNodoLL* nvo=new MyNodoLL(key,data,this->head);
-    nvo->next=this->head;
     this->head=nvo;
+    if (this->size==0){
+        this->tail=nvo;
+    }
     this->size++;
 }
 
-void MyLinkedList::removeFirst(){
+void MyLinkedList::removeFirst(){ //O(1)
     if(this->size>0){
     MyNodoLL*tmp=this->head;
     this->head=this->head->next;
@@ -64,43 +55,28 @@ void MyLinkedList::removeFirst(){
     }
 }
 
-/*void MyLinkedList::removeLast(){
+void MyLinkedList::removeAt(string key){ //O(n)
     if(this->size>0){
-    if(this->size==1){
-        delete this->head;
-        this->head=this->tail=nullptr;
-    }else{
-        MyNodoLL*tmp=this->head;
-        while(tmp->next!=this->tail){
-            tmp=tmp->next;
+        if(this->head->key==key){
+            this->removeFirst();
         }
-        delete this->tail;
-        this->tail=tmp;
-        this->tail->next=nullptr;
-    }
-    this->size--;
-    }else{
-        throw invalid_argument("No se puede eliminar el ultimo elemento de una lista vacia");
-    }
-}*/
-
-void MyLinkedList::removeAt(string key){
-    if(this->size>0){
-    if(pos==0){
-        this->removeFirst();
-    }else if(pos==this->size-1){
-        this->removeLast();
-    }else{
-        MyNodoLL*tmp=this->head;
-        for(int i=0;i<pos-1;i++){
-            tmp=tmp->next;
+        else{
+            MyNodoLL*tmp=this->head;
+            while(tmp->next!=nullptr && tmp->next->key!=key){
+                tmp=tmp->next;
+            }
+            if(tmp->next!=nullptr){
+                MyNodoLL*tmp2=tmp->next;
+                tmp->next=tmp2->next;
+                delete tmp2;
+                this->size--;
+            }
+            else{
+                throw invalid_argument("No se encontro la llave "+key+"en la tabla");
+            }
         }
-        MyNodoLL*tmp2=tmp->next;
-        tmp->next=tmp2->next;
-        delete tmp2;
-        this->size--;
     }
-    }else{
+    else{
         throw invalid_argument("No se puede eliminar un elemento de una lista vacia");
     }
 }
